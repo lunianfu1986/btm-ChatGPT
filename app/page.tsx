@@ -192,27 +192,3 @@ export default function HomePage() {
                 </div>
 
                 <p className="text-sm text-slate-200/90">
-                  Play Bad Time Simulator and relive multiple Sans fight
-                  variants, Bad Time re-creations, and all major boss fights
-                  from Undertale and Deltarune – including custom remixes,
-                  Papyrus, Mettaton EX, Jevil, and more. Experience these
-                  legendary bullet-hell challenges instantly in your browser.
-                </p>
-
-                <h3 className="text-lg font-semibold mt-4">
-                  What is Bad Time Simulator?
-                </h3>
-                <p className="text-sm text-slate-200/90">
-                  Bad Time Simulator takes the game’s most notorious challenge –
-                  the final confrontation from Undertale&apos;s genocide route –
-                  and turns it into a focused boss-rush experience. Every attack
-                  pattern is reproduced to keep the intensity, while the browser
-                  format makes it easy to jump in and try again.
-                </p>
-
-                <h4 className="font-semibold mt-3 text-sm">
-                  Core Gameplay Highlights
-                </h4>
-                <ul className="text-sm text-slate-200/90 space-y-1 list-disc list-inside">
-                  <li>
-                    Authenti
