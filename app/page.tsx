@@ -1,5 +1,6 @@
-
+// app/page.tsx
 import Image from "next/image";
+import Link from "next/link";
 
 const thumbs = Array.from({ length: 18 }).map((_, i) => ({
   id: i + 1,
@@ -172,9 +173,12 @@ export default function HomePage() {
                   </p>
 
                   <div className="flex flex-wrap items-center gap-3">
-                    <button className="inline-flex items-center justify-center px-5 py-2.5 rounded-full bg-bts-accent hover:bg-bts-accent-soft text-sm font-medium shadow-bts-soft">
+                    <Link
+                      href="/play"
+                      className="inline-flex items-center justify-center px-5 py-2.5 rounded-full bg-bts-accent hover:bg-bts-accent-soft text-sm font-medium shadow-bts-soft"
+                    >
                       ▶ Play Now
-                    </button>
+                    </Link>
                     <button className="inline-flex items-center justify-center px-4 py-2 rounded-full border border-bts-border hover:border-bts-accent text-xs text-slate-200/90">
                       View Modes
                     </button>
@@ -428,9 +432,12 @@ export default function HomePage() {
                     lasts.
                   </p>
                 </div>
-                <button className="inline-flex items-center justify-center px-6 py-2.5 rounded-full bg-bts-accent hover:bg-bts-accent-soft text-sm font-medium shadow-bts-soft">
+                <Link
+                  href="/play"
+                  className="inline-flex items-center justify-center px-6 py-2.5 rounded-full bg-bts-accent hover:bg-bts-accent-soft text-sm font-medium shadow-bts-soft"
+                >
                   ▶ Play Bad Time Simulator Now
-                </button>
+                </Link>
               </div>
             </article>
 
