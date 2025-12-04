@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 };
 
 const GAME_URL =
-  "https://GAME_URL_HERE"; // TODO: 把这里替换成你真正的游戏链接
+  "https://lunianfu1986.github.io/bad-time-simulator-compiled/landing.html"; // TODO: 把这里替换成你真正的游戏链接
 
 export default function PlayPage() {
   return (
