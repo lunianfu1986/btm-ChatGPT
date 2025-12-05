@@ -1,7 +1,7 @@
 // app/page.tsx
 import Image from "next/image";
 import Link from "next/link";
-import { GameHeroCard } from "@/components/GameHeroCard";
+import { GameHeroSection } from "@/components/GameHeroSection";
 
 const thumbs = Array.from({ length: 18 }).map((_, i) => ({
   id: i + 1,
@@ -80,7 +80,7 @@ export default function HomePage() {
 
       {/* 右侧主区域 */}
       <div className="flex-1 flex flex-col">
-        {/* 顶部导航条 */}
+        {/* 顶部导航 */}
         <header className="sticky top-0 z-20 backdrop-blur bg-[#02061A]/90 border-b border-bts-border/60">
           <div className="max-w-7xl mx-auto px-4 lg:px-8 h-16 flex items-center justify-between gap-4">
             <div className="flex items-center gap-3">
@@ -118,12 +118,12 @@ export default function HomePage() {
 
         {/* 主内容 */}
         <main className="max-w-7xl mx-auto px-4 lg:px-8 py-6 lg:py-8 space-y-8">
-          {/* 顶部：大卡片 + 右侧缩略图 */}
+          {/* 顶部：英雄区 + 右侧缩略图 */}
           <section className="grid lg:grid-cols-[minmax(0,2.4fr)_minmax(260px,1fr)] gap-6 items-start">
-            {/* 左侧：英雄卡片 + 内嵌游戏 */}
-            <GameHeroCard />
+            {/* 左侧：英雄卡片（含多游戏列表） */}
+            <GameHeroSection />
 
-            {/* 右侧：广告 + 竖向缩略图 */}
+            {/* 右侧：广告 + 竖图墙 */}
             <div className="space-y-4">
               <div className="bg-bts-card-soft rounded-3xl p-4 border border-bts-border/80">
                 <p className="text-[11px] uppercase tracking-wide text-slate-400 mb-1">
@@ -154,7 +154,7 @@ export default function HomePage() {
             </div>
           </section>
 
-          {/* 中部截图区域 */}
+          {/* 中部截图区 */}
           <section className="bg-bts-card rounded-3xl p-4 md:p-5 border border-bts-border/80 shadow-bts-soft">
             <h2 className="text-sm font-semibold mb-3">Screenshots</h2>
             <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-2 md:gap-3">
@@ -174,11 +174,10 @@ export default function HomePage() {
             </div>
           </section>
 
-          {/* 下部：左侧文章 + 右侧评论 */}
+          {/* 下部：左文字 + 右评论 */}
           <section className="grid lg:grid-cols-[minmax(0,2.1fr)_minmax(320px,1fr)] gap-6 items-start">
-            {/* 左边文字区 */}
+            {/* 左侧内容 */}
             <article className="space-y-6">
-              {/* 游戏介绍 */}
               <div className="bg-bts-card rounded-3xl p-5 border border-bts-border/80 space-y-4">
                 <div>
                   <h2 className="text-xl font-semibold">
@@ -347,7 +346,7 @@ export default function HomePage() {
               </div>
             </article>
 
-            {/* 右边评论区 */}
+            {/* 右侧评论区 */}
             <aside className="space-y-4">
               <div className="bg-bts-card rounded-3xl p-4 border border-bts-border/80 max-h-[520px] overflow-y-auto">
                 <div className="flex items-center justify-between mb-3">
