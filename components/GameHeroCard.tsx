@@ -3,12 +3,14 @@
 
 import Image from "next/image";
 import { useRef, useState } from "react";
+import type { GameConfig } from "@/lib/games";
+import { InteractiveRating } from "./InteractiveRating";
 
-const GAME_URL = "https://jcw87.github.io/c2-sans-fight/";
-// 以后你把游戏文件拷到自己项目的 public/games/sans-fight 下，就可以改成：
-// const GAME_URL = "/games/sans-fight/index.html";
+type GameHeroCardProps = {
+  game: GameConfig;
+};
 
-export function GameHeroCard() {
+export function GameHeroCard({ game }: GameHeroCardProps) {
   const [playing, setPlaying] = useState(false);
   const containerRef = useRef<HTMLDivElement | null>(null);
 
@@ -21,7 +23,7 @@ export function GameHeroCard() {
       const url = window.location.href;
       if (navigator.share) {
         await navigator.share({
-          title: "Bad Time Simulator – Endless Sans",
+          title: `Bad Time Simulator – ${game.name}`,
           text: "Try this Sans fight in your browser!",
           url,
         });
@@ -50,12 +52,13 @@ export function GameHeroCard() {
       ref={containerRef}
       className="bg-[#10236b]/80 rounded-[32px] border border-bts-border/80 shadow-bts-soft overflow-hidden"
     >
-      <div className="relative aspect-[16/9] w-full">
+      {/* 放大：固定一个比较高的高度，而不是 16:9 比例 */}
+      <div className="relative w-full min-h-[360px] md:min-h-[480px] lg:min-h-[560px]">
         {/* 背景 / 游戏区域 */}
         {playing ? (
           <iframe
-            src={GAME_URL}
-            title="Bad Time Simulator – Sans Fight"
+            src={game.gameUrl}
+            title={`Bad Time Simulator – ${game.name}`}
             className="absolute inset-0 w-full h-full border-0"
             allow="fullscreen; autoplay"
           />
@@ -63,30 +66,30 @@ export function GameHeroCard() {
           <>
             {/* 背景图 */}
             <Image
-              src="/images/bts-hero.jpg"
-              alt="Endless Sans background"
+              src={game.heroBg}
+              alt={`${game.name} background`}
               fill
               className="object-cover"
             />
             {/* 蓝色蒙版 */}
-            <div className="absolute inset-0 bg-gradient-to-b from-[#0b1f63]/70 via-[#071443]/80 to-[#02061a]/95" />
+            <div className="absolute inset-0 bg-gradient-to-b from-[#0b1f63]/70 via-[#071443]/82 to-[#02061a]/96" />
 
             {/* 中间内容：圆头像 + 标题 + Play 按钮 */}
             <div className="relative z-10 h-full flex flex-col items-center justify-center px-4 text-center">
               <div className="relative mb-6">
-                <div className="w-40 h-40 rounded-full border-[6px] border-[#6f8cff] shadow-[0_0_40px_rgba(111,140,255,0.7)] bg-black/60 overflow-hidden flex items-center justify-center">
+                <div className="w-40 h-40 md:w-44 md:h-44 rounded-full border-[6px] border-[#6f8cff] shadow-[0_0_40px_rgba(111,140,255,0.7)] bg-black/60 overflow-hidden flex items-center justify-center">
                   <Image
-                    src="/images/bts-avatar.png"
-                    alt="Endless Sans"
-                    width={160}
-                    height={160}
+                    src={game.avatar}
+                    alt={game.name}
+                    width={176}
+                    height={176}
                     className="object-cover"
                   />
                 </div>
               </div>
 
               <h1 className="text-3xl md:text-4xl font-semibold tracking-tight text-white mb-5">
-                Endless Sans
+                {game.name}
               </h1>
 
               <button
@@ -100,18 +103,14 @@ export function GameHeroCard() {
           </>
         )}
 
-        {/* 底部评分条 */}
-        <div className="pointer-events-none absolute left-0 right-0 bottom-0 h-12 md:h-14 bg-gradient-to-t from-[#010313]/95 via-[#010313]/80 to-transparent flex items-center">
-          <div className="pointer-events-auto flex items-center gap-2 text-xs md:text-sm text-slate-100 px-6">
-            <div className="flex items-center text-[#ffcf44]">
-              <span className="mr-0.5">★</span>
-              <span className="mr-0.5">★</span>
-              <span className="mr-0.5">★</span>
-              <span className="mr-0.5">★</span>
-              <span className="opacity-50">★</span>
-            </div>
-            <span className="font-semibold text-slate-100">2.8</span>
-            <span className="text-slate-300 text-[11px] md:text-xs">(6)</span>
+        {/* 底部评分条 + 右侧按钮 */}
+        <div className="pointer-events-none absolute left-0 right-0 bottom-0 h-12 md:h-14 bg-gradient-to-t from-[#010313]/98 via-[#010313]/85 to-transparent flex items-center">
+          <div className="pointer-events-auto flex items-center gap-2 px-6">
+            <InteractiveRating
+              gameId={game.id}
+              initialRating={game.rating}
+              initialCount={game.ratingCount}
+            />
           </div>
 
           {/* 右下角按钮 */}
