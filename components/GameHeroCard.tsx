@@ -38,12 +38,12 @@ export function GameHeroCard({ game }: GameHeroCardProps) {
   };
 
   const handleFullscreen = () => {
-    // 优先让 iframe 全屏，保证真正铺满屏幕
-    const el = iframeRef.current ?? containerRef.current;
-    if (!el) return;
+    // 没开始玩就全屏整张卡片，开始玩后优先全屏 iframe
+    const target = playing ? iframeRef.current : containerRef.current;
+    if (!target) return;
 
     if (!document.fullscreenElement) {
-      (el as any).requestFullscreen?.().catch(console.error);
+      (target as any).requestFullscreen?.().catch(console.error);
     } else {
       document.exitFullscreen?.().catch(console.error);
     }
@@ -54,7 +54,7 @@ export function GameHeroCard({ game }: GameHeroCardProps) {
       ref={containerRef}
       className="bg-[#10236b]/80 rounded-[32px] border border-bts-border/80 shadow-bts-soft overflow-hidden"
     >
-      {/* 整体高度：V1.2 的高度基础上保持不变 */}
+      {/* 整体高度：V1.2 的高度保持不变 */}
       <div className="relative w-full min-h-[420px] md:min-h-[560px] lg:min-h-[640px] xl:min-h-[700px]">
         {/* 背景 / 游戏区域 */}
         {playing ? (
@@ -77,7 +77,7 @@ export function GameHeroCard({ game }: GameHeroCardProps) {
             {/* 蓝色蒙版 */}
             <div className="absolute inset-0 bg-gradient-to-b from-[#0b1f63]/70 via-[#071443]/82 to-[#02061a]/96" />
 
-            {/* ⚠ 关键：把内容绝对定位到整个卡片中间，真正视觉居中 */}
+            {/* 居中内容：圆圈 + 标题 + Play 按钮 */}
             <div className="absolute inset-0 z-10 flex items-center justify-center px-4 text-center">
               <div className="flex flex-col items-center">
                 <div className="relative mb-6">
@@ -108,9 +108,10 @@ export function GameHeroCard({ game }: GameHeroCardProps) {
           </>
         )}
 
-        {/* 底部评分条 + 右侧按钮 */}
-        <div className="pointer-events-none absolute left-0 right-0 bottom-0 h-12 md:h-14 bg-gradient-to-t from-[#010313]/98 via-[#010313]/85 to-transparent flex items-center">
-          <div className="pointer-events-auto flex items-center gap-2 px-6">
+        {/* 底部评分条 + 右侧按钮（永远可点击，z-index 提高） */}
+        <div className="absolute left-0 right-0 bottom-0 z-20 h-12 md:h-14 bg-gradient-to-t from-[#010313]/98 via-[#010313]/85 to-transparent flex items-center">
+          {/* 评分 */}
+          <div className="flex items-center gap-2 px-6">
             <InteractiveRating
               gameId={game.id}
               initialRating={game.rating}
@@ -118,12 +119,12 @@ export function GameHeroCard({ game }: GameHeroCardProps) {
             />
           </div>
 
-          {/* 右下角按钮：使用 SVG 图标优化样式 */}
-          <div className="pointer-events-auto ml-auto flex items-center gap-2 pr-4 md:pr-5">
-            {/* 分享按钮 */}
+          {/* 右下角按钮：样式贴近你截图的两个方块按钮 */}
+          <div className="ml-auto flex items-center gap-2 pr-4 md:pr-5">
+            {/* 分享按钮：紫色方块 + 三节点图标 */}
             <button
               onClick={handleShare}
-              className="w-9 h-9 rounded-full bg-black/60 border border-white/15 flex items-center justify-center text-slate-100 hover:bg-white/10 transition"
+              className="w-9 h-9 rounded-2xl bg-[#5b4cfb] border border-white/10 flex items-center justify-center text-slate-50 hover:bg-[#6b5cff] transition"
               title="Share"
             >
               <svg
@@ -131,17 +132,53 @@ export function GameHeroCard({ game }: GameHeroCardProps) {
                 className="w-4 h-4"
                 aria-hidden="true"
               >
+                <circle
+                  cx="7"
+                  cy="12"
+                  r="1.7"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="1.6"
+                />
+                <circle
+                  cx="17"
+                  cy="7"
+                  r="1.7"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="1.6"
+                />
+                <circle
+                  cx="17"
+                  cy="17"
+                  r="1.7"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="1.6"
+                />
                 <path
-                  d="M14 3h7v7h-2V6.41l-7.29 7.3-1.42-1.42L17.59 5H14V3ZM5 5h6v2H6.99L5 6.99v11.02L6.99 20h11.02L20 18.01V13h2v5.01A2.99 2.99 0 0 1 19.01 21H4.99A2.99 2.99 0 0 1 2 18.01V4.99A2.99 2.99 0 0 1 4.99 2H10v2H5Z"
-                  fill="currentColor"
+                  d="M8.5 11.3 15.5 8"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="1.6"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+                <path
+                  d="M8.5 12.7 15.5 16"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="1.6"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
                 />
               </svg>
             </button>
 
-            {/* 全屏按钮 */}
+            {/* 全屏按钮：蓝色方块 + 四角图标 */}
             <button
               onClick={handleFullscreen}
-              className="w-9 h-9 rounded-full bg-black/60 border border-white/15 flex items-center justify-center text-slate-100 hover:bg-white/10 transition"
+              className="w-9 h-9 rounded-2xl bg-[#0091ff] border border-white/10 flex items-center justify-center text-slate-50 hover:bg-[#0aa0ff] transition"
               title="Fullscreen"
             >
               <svg
@@ -150,8 +187,12 @@ export function GameHeroCard({ game }: GameHeroCardProps) {
                 aria-hidden="true"
               >
                 <path
-                  d="M7 3H3v4h2V5h2V3Zm10 0v2h2v2h2V3h-4ZM5 17H3v4h4v-2H5v-2Zm16 0h-2v2h-2v2h4v-4Z"
-                  fill="currentColor"
+                  d="M7 5H5v4M5 7h4M17 5h2v4M19 7h-4M7 19H5v-4M5 17h4M17 19h2v-4M19 17h-4"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="1.6"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
                 />
               </svg>
             </button>
