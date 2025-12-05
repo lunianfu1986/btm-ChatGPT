@@ -123,7 +123,7 @@ export default function HomePage() {
             {/* 左侧：英雄卡片（含多游戏列表） */}
             <GameHeroSection />
 
-            {/* 右侧：广告 + 竖图墙 */}
+            {/* 右侧：广告 + 竖图墙（全部展开，无滚动条） */}
             <div className="space-y-4">
               <div className="bg-bts-card-soft rounded-3xl p-4 border border-bts-border/80">
                 <p className="text-[11px] uppercase tracking-wide text-slate-400 mb-1">
@@ -134,7 +134,7 @@ export default function HomePage() {
                 </div>
               </div>
 
-              <div className="bg-bts-card-soft rounded-3xl p-3 border border-bts-border/80 max-h-[580px] overflow-y-auto">
+              <div className="bg-bts-card-soft rounded-3xl p-3 border border-bts-border/80">
                 <div className="grid grid-cols-3 gap-2">
                   {thumbs.map((t) => (
                     <div
@@ -183,10 +183,6 @@ export default function HomePage() {
                   <h2 className="text-xl font-semibold">
                     Bad Time Simulator | Sans Fight &amp; Undertale Boss Battles
                   </h2>
-                  <p className="text-xs text-slate-400 mt-1">
-                    Bullet hell • Pattern memorization • High-intensity boss
-                    rush
-                  </p>
                 </div>
 
                 <p className="text-sm text-slate-200/90">
