@@ -2,7 +2,7 @@
 "use client";
 
 import Image from "next/image";
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 import type { GameConfig } from "../lib/games";
 import { InteractiveRating } from "./InteractiveRating";
 
@@ -13,6 +13,7 @@ type GameHeroCardProps = {
 export function GameHeroCard({ game }: GameHeroCardProps) {
   const [playing, setPlaying] = useState(false);
   const [shareOpen, setShareOpen] = useState(false);
+  const [pendingFullscreen, setPendingFullscreen] = useState(false); // 👈 等待自动全屏
 
   const containerRef = useRef<HTMLDivElement | null>(null);
   const iframeRef = useRef<HTMLIFrameElement | null>(null);
@@ -62,8 +63,17 @@ export function GameHeroCard({ game }: GameHeroCardProps) {
     }
   };
 
-  // 全屏：直接让 iframe 进入浏览器原生全屏
+  // 全屏按钮逻辑：
+  // 1. 若还没 playing，则先开始游戏，并标记 pendingFullscreen
+  // 2. 若已经 playing，直接对 iframe 调用全屏 / 退出全屏
   const handleFullscreen = () => {
+    // 还没开始游戏：先开始游戏，再等 iframe 出来自动全屏
+    if (!playing) {
+      setPlaying(true);
+      setPendingFullscreen(true);
+      return;
+    }
+
     const iframeEl = iframeRef.current;
     if (!iframeEl) return;
 
@@ -87,6 +97,28 @@ export function GameHeroCard({ game }: GameHeroCardProps) {
       });
     }
   };
+
+  // 当 pendingFullscreen = true 且 playing = true 且 iframe 已挂载时，自动请求一次全屏
+  useEffect(() => {
+    if (!pendingFullscreen || !playing) return;
+    const iframeEl = iframeRef.current as any;
+    if (!iframeEl) return;
+
+    if (!document.fullscreenElement) {
+      const req =
+        iframeEl.requestFullscreen ||
+        iframeEl.webkitRequestFullscreen ||
+        iframeEl.mozRequestFullScreen ||
+        iframeEl.msRequestFullscreen;
+
+      if (req) {
+        req.call(iframeEl).catch((err: unknown) => {
+          console.error("Auto fullscreen failed:", err);
+        });
+      }
+    }
+    setPendingFullscreen(false);
+  }, [pendingFullscreen, playing]);
 
   const cardBaseClass =
     "relative bg-[#10236b]/80 rounded-[32px] border border-bts-border/80 shadow-bts-soft overflow-hidden";
@@ -260,7 +292,7 @@ export function GameHeroCard({ game }: GameHeroCardProps) {
               </svg>
             </button>
 
-            {/* 全屏按钮：调用 iframe 的原生全屏 */}
+            {/* 全屏按钮：现在“随时可点”，未播放会自动播放 + 全屏 */}
             <button
               onClick={handleFullscreen}
               className="w-9 h-9 rounded-2xl bg-[#0091ff] border border-white/10 flex items-center justify-center text-slate-50 hover:bg-[#0aa0ff] transition"
