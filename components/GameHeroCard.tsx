@@ -3,7 +3,7 @@
 
 import Image from "next/image";
 import { useRef, useState } from "react";
-import type { GameConfig } from "@/lib/games";
+import type { GameConfig } from "../lib/games";
 import { InteractiveRating } from "./InteractiveRating";
 
 type GameHeroCardProps = {
@@ -52,8 +52,8 @@ export function GameHeroCard({ game }: GameHeroCardProps) {
       ref={containerRef}
       className="bg-[#10236b]/80 rounded-[32px] border border-bts-border/80 shadow-bts-soft overflow-hidden"
     >
-      {/* 放大：固定一个比较高的高度，而不是 16:9 比例 */}
-      <div className="relative w-full min-h-[360px] md:min-h-[480px] lg:min-h-[560px]">
+      {/* 🔹这里是高度调整：整体更高，更接近你标红的区域 */}
+      <div className="relative w-full min-h-[420px] md:min-h-[560px] lg:min-h-[640px] xl:min-h-[700px]">
         {/* 背景 / 游戏区域 */}
         {playing ? (
           <iframe
