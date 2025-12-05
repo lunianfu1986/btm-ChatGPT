@@ -71,8 +71,18 @@ export default function HomePage() {
               <Link href="/games" className="hover:text-white">
                 All Games
               </Link>
-              <button className="hover:text-white">Sans Fight Mastery</button>
-              <button className="hover:text-white">Papyrus Encounter</button>
+              <Link
+                href="/posts/sans-fight-mastery"
+                className="hover:text-white"
+              >
+                Sans Fight Mastery
+              </Link>
+              <Link
+                href="/posts/papyrus-encounter"
+                className="hover:text-white"
+              >
+                Papyrus Encounter
+              </Link>
               <button className="hover:text-white">Play Deltarune</button>
             </nav>
           </div>
