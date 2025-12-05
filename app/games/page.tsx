@@ -8,10 +8,10 @@ export default function AllGamesPage() {
     <div className="min-h-screen flex text-slate-100 bg-gradient-to-b from-[#030b2a] via-[#02061a] to-[#010312]">
       {/* 左侧竖导航（和首页一致） */}
       <aside className="hidden lg:flex flex-col items-center gap-6 w-16 bg-[#02061A]/80 border-r border-bts-border/60 pt-6">
-        <div className="w-10 h-10 rounded-2xl bg-bts-accent flex items-center justify-center text-xs font-semibold shadow-bts-soft">
+        <div className="w-10 h-10 rounded-2xl bg-bts-accent flex items-center justify-center text-sm font-semibold shadow-bts-soft">
           BTS
         </div>
-        <div className="flex flex-col gap-4 mt-4 text-slate-400 text-xl">
+        <div className="flex flex-col gap-4 mt-4 text-slate-400 text-2xl">
           <button className="w-9 h-9 rounded-2xl flex items-center justify-center bg-bts-card-soft hover:bg-bts-accent/80 hover:text-white transition">
             🕹
           </button>
@@ -29,41 +29,41 @@ export default function AllGamesPage() {
 
       {/* 右侧主区域 */}
       <div className="flex-1 flex flex-col">
-        {/* 顶部导航（All Games 处于选中状态） */}
-        <header className="sticky top-0 z-20 backdrop-blur bg-[#02061A]/90 border-b border-bts-border/60">
+        {/* 顶部导航（渐变背景 + logo 链接） */}
+        <header className="sticky top-0 z-20 backdrop-blur bg-gradient-to-r from-[#1350d4] via-[#2337b7] to-[#1350d4] border-b border-bts-border/60 shadow-[0_10px_30px_rgba(0,0,0,0.45)]">
           <div className="max-w-7xl mx-auto px-4 lg:px-8 h-16 flex items-center justify-between gap-4">
             <div className="flex items-center gap-3">
-              <div className="lg:hidden w-9 h-9 rounded-2xl bg-bts-accent flex items-center justify-center text-xs font-semibold">
+              <div className="lg:hidden w-9 h-9 rounded-2xl bg-bts-accent flex items-center justify-center text-sm font-semibold">
                 BTS
               </div>
-              <div className="font-semibold tracking-tight">
+              <Link
+                href="/"
+                className="font-semibold tracking-tight text-lg md:text-xl hover:text-white"
+              >
                 Bad Time Simulator
-              </div>
-              <nav className="hidden md:flex items-center gap-6 text-sm text-slate-300">
-                <Link
-                  href="/games"
-                  className="text-white font-semibold"
-                >
+              </Link>
+              <nav className="hidden md:flex items-center gap-6 text-base text-slate-200">
+                <Link href="/games" className="text-white font-semibold">
                   All Games
                 </Link>
-                <button className="hover:text-white">Sans Fight Memory</button>
+                <button className="hover:text-white">Sans Fight Mastery</button>
                 <button className="hover:text-white">Papyrus Encounter</button>
                 <button className="hover:text-white">Play Deltarune</button>
               </nav>
             </div>
 
             <div className="flex items-center gap-3">
-              <div className="hidden md:flex items-center bg-[#020b27] border border-bts-border/80 rounded-full px-3 py-1.5 text-sm text-slate-300 min-w-[220px]">
-                <span className="mr-2 opacity-60">🔍</span>
+              <div className="hidden md:flex items-center bg-[#020b27]/80 border border-bts-border/80 rounded-full px-3 py-1.5 text-base text-slate-100 min-w-[260px]">
+                <span className="mr-2 opacity-70 text-lg">🔍</span>
                 <input
-                  className="bg-transparent outline-none flex-1 text-xs placeholder:text-slate-500"
+                  className="bg-transparent outline-none flex-1 text-sm placeholder:text-slate-400"
                   placeholder="Search games, Sans fights, guides..."
                 />
               </div>
-              <button className="hidden sm:inline-flex items-center text-xs px-3 py-1.5 rounded-full border border-bts-border/80 hover:border-bts-accent hover:text-bts-accent transition">
+              <button className="hidden sm:inline-flex items-center text-sm px-4 py-1.5 rounded-full border border-bts-border/80 hover:border-bts-accent hover:text-bts-accent transition">
                 Log in
               </button>
-              <button className="inline-flex items-center text-xs px-3 py-1.5 rounded-full bg-bts-accent hover:bg-bts-accent-soft transition shadow-bts-soft">
+              <button className="inline-flex items-center text-sm px-4 py-1.5 rounded-full bg-bts-accent hover:bg-bts-accent-soft transition shadow-bts-soft">
                 Sign up
               </button>
             </div>
@@ -71,13 +71,13 @@ export default function AllGamesPage() {
         </header>
 
         {/* All Games 列表主体 */}
-        <main className="max-w-7xl mx-auto px-4 lg:px-8 py-6 lg:py-8 space-y-6">
+        <main className="max-w-7xl mx-auto px-4 lg:px-8 py-6 lg:py-8 space-y-6 text-base">
           <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-3">
             <div>
               <h1 className="text-2xl md:text-3xl font-semibold tracking-tight">
                 All Games
               </h1>
-              <p className="mt-1 text-sm text-slate-300 max-w-xl">
+              <p className="mt-1 text-base text-slate-300 max-w-xl leading-relaxed">
                 Browse every Bad Time Simulator variant – Endless Sans, classic
                 Sans fight, practice modes and more. Click any card to jump
                 straight into the fight.
@@ -85,7 +85,7 @@ export default function AllGamesPage() {
             </div>
             <Link
               href="/"
-              className="inline-flex items-center justify-center px-4 py-2 rounded-full bg-bts-card-soft border border-bts-border/80 text-xs text-slate-200 hover:border-bts-accent hover:text-bts-accent transition"
+              className="inline-flex items-center justify-center px-4 py-2 rounded-full bg-bts-card-soft border border-bts-border/80 text-sm text-slate-200 hover:border-bts-accent hover:text-bts-accent transition"
             >
               ← Back to homepage
             </Link>
@@ -111,15 +111,15 @@ export default function AllGamesPage() {
                 {/* 文本信息 */}
                 <div className="mt-3 flex-1 flex flex-col gap-2">
                   <div className="flex items-center justify-between gap-2">
-                    <h2 className="text-sm font-semibold truncate">
+                    <h2 className="text-base font-semibold truncate">
                       {game.name}
                     </h2>
-                    <span className="text-[11px] text-slate-300 whitespace-nowrap">
+                    <span className="text-sm text-slate-200 whitespace-nowrap">
                       ★ {game.rating.toFixed(1)} ({game.ratingCount})
                     </span>
                   </div>
                   {game.shortTag && (
-                    <p className="text-xs text-slate-400 line-clamp-2">
+                    <p className="text-sm text-slate-300 line-clamp-2 leading-snug">
                       {game.shortTag}
                     </p>
                   )}
@@ -131,14 +131,14 @@ export default function AllGamesPage() {
                     href={game.gameUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center justify-center flex-1 px-3 py-2 rounded-full bg-bts-accent hover:bg-bts-accent-soft text-xs font-medium shadow-bts-soft"
+                    className="inline-flex items-center justify-center flex-1 px-3 py-2 rounded-full bg-bts-accent hover:bg-bts-accent-soft text-sm font-medium shadow-bts-soft"
                   >
-                    <span className="mr-1 text-sm">▶</span>
+                    <span className="mr-1 text-base">▶</span>
                     Play Now
                   </Link>
                   <Link
                     href="/"
-                    className="text-[11px] text-slate-400 hover:text-bts-accent whitespace-nowrap"
+                    className="text-sm text-slate-300 hover:text-bts-accent whitespace-nowrap"
                   >
                     View hero
                   </Link>
@@ -150,7 +150,7 @@ export default function AllGamesPage() {
 
         {/* 页脚（和首页风格统一） */}
         <footer className="border-t border-bts-border/80 mt-6">
-          <div className="max-w-7xl mx-auto px-4 lg:px-8 py-6 text-xs text-slate-400 flex flex-col md:flex-row items-center justify-between gap-3">
+          <div className="max-w-7xl mx-auto px-4 lg:px-8 py-6 text-sm text-slate-400 flex flex-col md:flex-row items-center justify-between gap-3">
             <div className="flex items-center gap-2">
               <span className="font-semibold text-slate-200">
                 Bad Time Simulator
