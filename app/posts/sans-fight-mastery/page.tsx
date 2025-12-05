@@ -184,7 +184,7 @@ export default function SansFightMasteryPage() {
                 <div className="mt-3 flex items-center justify-between text-xs text-slate-400">
                   <span>{post.date}</span>
                   <Link
-                    href="#"
+                    href={`/posts/sans-fight-mastery/${post.slug}`}
                     className="text-bts-accent hover:text-bts-accent-soft"
                   >
                     Read more →
