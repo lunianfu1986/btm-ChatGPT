@@ -90,12 +90,15 @@ export default function HomePage() {
               <div className="font-semibold tracking-tight">
                 Bad Time Simulator
               </div>
-              <nav className="hidden md:flex items-center gap-6 text-sm text-slate-300">
-                <button className="hover:text-white">All Games</button>
-                <button className="hover:text-white">Sans Fight Memory</button>
-                <button className="hover:text-white">Papyrus Encounter</button>
-                <button className="hover:text-white">Play Deltarune</button>
-              </nav>
+<nav className="hidden md:flex items-center gap-6 text-sm text-slate-300">
+  <Link href="/games" className="hover:text-white">
+    All Games
+  </Link>
+  <button className="hover:text-white">Sans Fight Memory</button>
+  <button className="hover:text-white">Papyrus Encounter</button>
+  <button className="hover:text-white">Play Deltarune</button>
+</nav>
+
             </div>
 
             <div className="flex items-center gap-3">
