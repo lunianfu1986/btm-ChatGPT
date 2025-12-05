@@ -233,4 +233,193 @@ export default function HomePage() {
               </div>
 
               {/* How to play + video */}
-              <div className="bg-bts-card rounded-3xl p-5 border border-bts-
+              <div className="bg-bts-card rounded-3xl p-5 border border-bts-border/80 space-y-4">
+                <h3 className="text-lg font-semibold">
+                  How to Play Bad Time Simulator
+                </h3>
+                <p className="text-sm text-slate-200/90">
+                  Master the controls and game modes to survive the legendary
+                  Bad Time Simulator challenge.
+                </p>
+
+                <div className="grid md:grid-cols-2 gap-4">
+                  <div className="bg-bts-card-soft rounded-2xl p-4 border border-bts-border/80 text-sm text-slate-200/90 space-y-2">
+                    <h4 className="font-semibold text-sm mb-1">
+                      Game Modes Available
+                    </h4>
+                    <ul className="space-y-1 list-disc list-inside">
+                      <li>
+                        <span className="font-semibold">Normal Mode:</span> The
+                        classic Sans boss experience.
+                      </li>
+                      <li>
+                        <span className="font-semibold">Practice Mode:</span>{" "}
+                        Retry specific patterns without pressure.
+                      </li>
+                      <li>
+                        <span className="font-semibold">Endless Mode:</span>{" "}
+                        Survive as long as possible with randomized attacks.
+                      </li>
+                    </ul>
+                  </div>
+
+                  <div className="bg-bts-card-soft rounded-2xl p-4 border border-bts-border/80 text-sm text-slate-200/90 space-y-2">
+                    <h4 className="font-semibold text-sm mb-1">
+                      Master Bad Time Strategies
+                    </h4>
+                    <ul className="space-y-1 list-disc list-inside">
+                      <li>Learn patterns instead of reacting randomly.</li>
+                      <li>Focus on hitbox awareness and tiny movements.</li>
+                      <li>Avoid panic jumping – stay calm and precise.</li>
+                      <li>Use Practice mode to drill the hardest attacks.</li>
+                    </ul>
+                  </div>
+                </div>
+
+                <div className="bg-bts-card-soft rounded-2xl border border-bts-border/80 overflow-hidden">
+                  <div className="aspect-video relative bg-black/70">
+                    <Image
+                      src="/images/bts-video-thumb.jpg"
+                      alt="Bad Time Simulator video"
+                      fill
+                      className="object-cover opacity-80"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-black/20 to-black/60" />
+                    <button className="absolute inset-0 m-auto w-16 h-16 rounded-full bg-bts-accent hover:bg-bts-accent-soft flex items-center justify-center shadow-bts-soft text-2xl">
+                      ▶
+                    </button>
+                  </div>
+                  <div className="px-4 py-3 text-sm flex items-center justify-between">
+                    <span className="font-medium">
+                      Bad Time Mastery – See All Attack Patterns in Action
+                    </span>
+                    <span className="text-xs text-slate-400 hidden md:inline">
+                      YouTube • Gameplay walkthrough
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              {/* FAQ */}
+              <div className="bg-bts-card rounded-3xl p-5 border border-bts-border/80 space-y-3">
+                <h3 className="text-lg font-semibold mb-1">FAQ</h3>
+                <p className="text-sm text-slate-300 mb-2">
+                  Common questions about Bad Time Simulator.
+                </p>
+                <div className="space-y-2">
+                  {faqItems.map((item, idx) => (
+                    <details
+                      key={idx}
+                      className="group bg-bts-card-soft border border-bts-border/80 rounded-2xl px-4 py-3 text-sm"
+                    >
+                      <summary className="flex items-center justify-between cursor-pointer list-none">
+                        <span className="font-medium">{item.q}</span>
+                        <span className="ml-4 text-xs text-slate-400 group-open:hidden">
+                          +
+                        </span>
+                        <span className="ml-4 text-xs text-slate-400 hidden group-open:inline">
+                          −
+                        </span>
+                      </summary>
+                      <p className="mt-2 text-slate-200/90">{item.a}</p>
+                    </details>
+                  ))}
+                </div>
+              </div>
+
+              {/* 底部 CTA */}
+              <div className="bg-gradient-to-r from-bts-card-soft to-[#163b7e] rounded-3xl p-6 border border-bts-border/80 flex flex-col md:flex-row items-center justify-between gap-4">
+                <div>
+                  <h3 className="text-xl font-semibold">
+                    Ready for the Challenge?
+                  </h3>
+                  <p className="text-sm text-slate-200/90 mt-1">
+                    Jump into the Sans fight and see how long your determination
+                    lasts.
+                  </p>
+                </div>
+                <Link
+                  href="#top"
+                  className="inline-flex items-center justify-center px-6 py-2.5 rounded-full bg-bts-accent hover:bg-bts-accent-soft text-sm font-medium shadow-bts-soft"
+                >
+                  ▶ Play Bad Time Simulator Now
+                </Link>
+              </div>
+            </article>
+
+            {/* 右边评论区 */}
+            <aside className="space-y-4">
+              <div className="bg-bts-card rounded-3xl p-4 border border-bts-border/80 max-h-[520px] overflow-y-auto">
+                <div className="flex items-center justify-between mb-3">
+                  <h3 className="text-sm font-semibold">Comments</h3>
+                  <button className="text-[11px] text-bts-accent hover:underline">
+                    Load More
+                  </button>
+                </div>
+                <div className="space-y-3">
+                  {comments.map((c, idx) => (
+                    <div
+                      key={idx}
+                      className="rounded-2xl bg-bts-card-soft/70 p-3 border border-bts-border/70"
+                    >
+                      <div className="flex items-center justify-between gap-2 mb-1.5">
+                        <div className="flex items-center gap-2">
+                          <div className="w-7 h-7 rounded-full bg-bts-accent/30 flex items-center justify-center text-[11px] font-semibold">
+                            {c.user[0]}
+                          </div>
+                          <div>
+                            <p className="text-xs font-medium">{c.user}</p>
+                            <p className="text-[11px] text-slate-400">
+                              {c.time}
+                            </p>
+                          </div>
+                        </div>
+                        <button className="text-[10px] text-slate-400 hover:text-slate-200">
+                          ⋮
+                        </button>
+                      </div>
+                      <p className="text-xs text-slate-200/90">{c.text}</p>
+                    </div>
+                  ))}
+                </div>
+
+                <div className="mt-4 pt-3 border-t border-bts-border/70">
+                  <p className="text-xs font-semibold mb-2">Add a Comment</p>
+                  <input
+                    className="w-full bg-[#020b27] border border-bts-border/80 rounded-xl px-3 py-2 text-xs outline-none focus:border-bts-accent"
+                    placeholder="Name"
+                  />
+                  <textarea
+                    className="mt-2 w-full bg-[#020b27] border border-bts-border/80 rounded-xl px-3 py-2 text-xs outline-none resize-none focus:border-bts-accent h-20"
+                    placeholder="Write your comment..."
+                  />
+                  <button className="mt-2 w-full inline-flex items-center justify-center px-4 py-2 rounded-xl bg-bts-accent hover:bg-bts-accent-soft text-xs font-medium">
+                    Submit Comment
+                  </button>
+                </div>
+              </div>
+            </aside>
+          </section>
+        </main>
+
+        {/* 页脚 */}
+        <footer className="border-t border-bts-border/80 mt-6">
+          <div className="max-w-7xl mx-auto px-4 lg:px-8 py-6 text-xs text-slate-400 flex flex-col md:flex-row items-center justify-between gap-3">
+            <div className="flex items-center gap-2">
+              <span className="font-semibold text-slate-200">
+                Bad Time Simulator
+              </span>
+              <span>© {new Date().getFullYear()} bad-time-simulator.com</span>
+            </div>
+            <div className="flex items-center gap-4">
+              <button className="hover:text-slate-200">About Us</button>
+              <button className="hover:text-slate-200">Contact</button>
+              <button className="hover:text-slate-200">Game Guide</button>
+              <button className="hover:text-slate-200">Terms of Service</button>
+            </div>
+          </div>
+        </footer>
+      </div>
+    </div>
+  );
+}
