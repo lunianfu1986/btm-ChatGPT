@@ -2,7 +2,7 @@
 "use client";
 
 import Image from "next/image";
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import type { GameConfig } from "../lib/games";
 import { InteractiveRating } from "./InteractiveRating";
 
@@ -12,7 +12,6 @@ type GameHeroCardProps = {
 
 export function GameHeroCard({ game }: GameHeroCardProps) {
   const [playing, setPlaying] = useState(false);
-  const [isFullscreen, setIsFullscreen] = useState(false);
   const [shareOpen, setShareOpen] = useState(false);
 
   const containerRef = useRef<HTMLDivElement | null>(null);
@@ -22,13 +21,14 @@ export function GameHeroCard({ game }: GameHeroCardProps) {
     setPlaying(true);
   };
 
-  // 分享弹层开关
+  // 当前地址
+  const currentUrl = () =>
+    typeof window !== "undefined" ? window.location.href : "";
+
+  // 分享面板开关
   const toggleSharePanel = () => {
     setShareOpen((prev) => !prev);
   };
-
-  const currentUrl = () =>
-    typeof window !== "undefined" ? window.location.href : "";
 
   // 各平台分享
   const openShareWindow = (platform: "x" | "facebook" | "reddit") => {
@@ -62,41 +62,40 @@ export function GameHeroCard({ game }: GameHeroCardProps) {
     }
   };
 
-  // 自定义「全屏」：让整张卡片变成 fixed overlay
-  const handleFullscreenToggle = () => {
-    setIsFullscreen((prev) => !prev);
-  };
+  // 全屏：直接让 iframe 进入浏览器原生全屏
+  const handleFullscreen = () => {
+    const iframeEl = iframeRef.current;
+    if (!iframeEl) return;
 
-  // 全屏时禁掉 body 滚动
-  useEffect(() => {
-    if (typeof document === "undefined") return;
-    const originalOverflow = document.body.style.overflow;
-    if (isFullscreen) {
-      document.body.style.overflow = "hidden";
+    const anyEl = iframeEl as any;
+
+    if (!document.fullscreenElement) {
+      const req =
+        anyEl.requestFullscreen ||
+        anyEl.webkitRequestFullscreen ||
+        anyEl.mozRequestFullScreen ||
+        anyEl.msRequestFullscreen;
+
+      if (req) {
+        req.call(anyEl).catch((err: unknown) => {
+          console.error("Failed to enter fullscreen:", err);
+        });
+      }
     } else {
-      document.body.style.overflow = originalOverflow;
+      document.exitFullscreen?.().catch((err) => {
+        console.error("Failed to exit fullscreen:", err);
+      });
     }
-    return () => {
-      document.body.style.overflow = originalOverflow;
-    };
-  }, [isFullscreen]);
+  };
 
   const cardBaseClass =
     "relative bg-[#10236b]/80 rounded-[32px] border border-bts-border/80 shadow-bts-soft overflow-hidden";
-  const cardFullscreenClass = isFullscreen
-    ? "fixed inset-0 z-50 rounded-none border-none w-screen h-screen max-w-none m-0"
-    : "";
-
-  const innerBaseHeight =
+  const innerHeightClass =
     "min-h-[420px] md:min-h-[560px] lg:min-h-[640px] xl:min-h-[700px]";
-  const innerHeightClass = isFullscreen ? "h-full" : innerBaseHeight;
 
   return (
-    <div
-      ref={containerRef}
-      className={`${cardBaseClass} ${cardFullscreenClass}`}
-    >
-      {/* 分享浮层：挂在整张卡片上，右下角上方 */}
+    <div ref={containerRef} className={cardBaseClass}>
+      {/* 分享浮层：右下角上方的小面板 */}
       {shareOpen && (
         <div className="absolute right-4 bottom-16 z-40">
           <div className="w-64 rounded-2xl bg-[#02061a]/95 border border-white/10 shadow-[0_18px_40px_rgba(0,0,0,0.6)] p-3 text-xs text-slate-100">
@@ -153,7 +152,8 @@ export function GameHeroCard({ game }: GameHeroCardProps) {
             src={game.gameUrl}
             title={`Bad Time Simulator – ${game.name}`}
             className="absolute inset-0 w-full h-full border-0"
-            allow="autoplay"
+            allow="autoplay; fullscreen"
+            allowFullScreen
           />
         ) : (
           <>
@@ -195,7 +195,7 @@ export function GameHeroCard({ game }: GameHeroCardProps) {
           </>
         )}
 
-        {/* 底部评分条 + 右下角按钮（始终可点） */}
+        {/* 底部评分条 + 右下角按钮 */}
         <div className="absolute left-0 right-0 bottom-0 z-30 h-12 md:h-14 bg-gradient-to-t from-[#010313]/98 via-[#010313]/85 to-transparent flex items-center">
           <div className="flex items-center gap-2 px-6">
             <InteractiveRating
@@ -206,7 +206,7 @@ export function GameHeroCard({ game }: GameHeroCardProps) {
           </div>
 
           <div className="ml-auto flex items-center gap-2 pr-4 md:pr-5">
-            {/* 分享按钮：紫色方块 */}
+            {/* 分享按钮 */}
             <button
               onClick={toggleSharePanel}
               className="w-9 h-9 rounded-2xl bg-[#5b4cfb] border border-white/10 flex items-center justify-center text-slate-50 hover:bg-[#6b5cff] transition"
@@ -260,9 +260,9 @@ export function GameHeroCard({ game }: GameHeroCardProps) {
               </svg>
             </button>
 
-            {/* 全屏按钮：蓝色方块，自定义覆盖层 */}
+            {/* 全屏按钮：调用 iframe 的原生全屏 */}
             <button
-              onClick={handleFullscreenToggle}
+              onClick={handleFullscreen}
               className="w-9 h-9 rounded-2xl bg-[#0091ff] border border-white/10 flex items-center justify-center text-slate-50 hover:bg-[#0aa0ff] transition"
               title="Fullscreen"
             >
