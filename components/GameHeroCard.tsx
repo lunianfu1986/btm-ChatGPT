@@ -2,7 +2,7 @@
 "use client";
 
 import Image from "next/image";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { GameConfig } from "../lib/games";
 import { InteractiveRating } from "./InteractiveRating";
 
@@ -12,6 +12,9 @@ type GameHeroCardProps = {
 
 export function GameHeroCard({ game }: GameHeroCardProps) {
   const [playing, setPlaying] = useState(false);
+  const [isFullscreen, setIsFullscreen] = useState(false);
+  const [shareOpen, setShareOpen] = useState(false);
+
   const containerRef = useRef<HTMLDivElement | null>(null);
   const iframeRef = useRef<HTMLIFrameElement | null>(null);
 
@@ -19,70 +22,149 @@ export function GameHeroCard({ game }: GameHeroCardProps) {
     setPlaying(true);
   };
 
-  // 分享到 X，并复制链接到剪贴板（不再弹出系统短信/邮件）
-  const handleShare = async () => {
-    try {
-      const url = window.location.href;
-      const encodedUrl = encodeURIComponent(url);
-      const text = encodeURIComponent(
-        `Play ${game.name} on Bad Time Simulator!`
-      );
+  // 分享弹层开关
+  const toggleSharePanel = () => {
+    setShareOpen((prev) => !prev);
+  };
 
-      // 打开 X（Twitter）分享窗口
-      const shareUrl = `https://twitter.com/intent/tweet?text=${text}&url=${encodedUrl}`;
+  const currentUrl = () =>
+    typeof window !== "undefined" ? window.location.href : "";
+
+  // 各平台分享
+  const openShareWindow = (platform: "x" | "facebook" | "reddit") => {
+    const url = encodeURIComponent(currentUrl());
+    const text = encodeURIComponent(`Play ${game.name} on Bad Time Simulator!`);
+
+    let shareUrl = "";
+    if (platform === "x") {
+      shareUrl = `https://twitter.com/intent/tweet?text=${text}&url=${url}`;
+    } else if (platform === "facebook") {
+      shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${url}`;
+    } else if (platform === "reddit") {
+      shareUrl = `https://www.reddit.com/submit?url=${url}&title=${text}`;
+    }
+
+    if (shareUrl) {
       window.open(shareUrl, "_blank", "noopener,noreferrer");
+    }
+    setShareOpen(false);
+  };
 
-      // 顺便复制链接到剪贴板
-      if (navigator.clipboard) {
+  const handleCopyLink = async () => {
+    try {
+      const url = currentUrl();
+      if (navigator.clipboard && url) {
         await navigator.clipboard.writeText(url);
+        alert("Link copied to clipboard");
       }
     } catch (e) {
       console.error(e);
     }
   };
 
-  // 修复全屏：没玩时全屏卡片，玩的时候优先全屏 iframe
-  const handleFullscreen = () => {
-    const target = playing ? iframeRef.current : containerRef.current;
-    if (!target) return;
-
-    if (!document.fullscreenElement) {
-      (target as any).requestFullscreen?.().catch(console.error);
-    } else {
-      document.exitFullscreen?.().catch(console.error);
-    }
+  // 自定义「全屏」：让整张卡片变成 fixed overlay
+  const handleFullscreenToggle = () => {
+    setIsFullscreen((prev) => !prev);
   };
+
+  // 全屏时禁掉 body 滚动
+  useEffect(() => {
+    if (typeof document === "undefined") return;
+    const originalOverflow = document.body.style.overflow;
+    if (isFullscreen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = originalOverflow;
+    }
+    return () => {
+      document.body.style.overflow = originalOverflow;
+    };
+  }, [isFullscreen]);
+
+  const cardBaseClass =
+    "relative bg-[#10236b]/80 rounded-[32px] border border-bts-border/80 shadow-bts-soft overflow-hidden";
+  const cardFullscreenClass = isFullscreen
+    ? "fixed inset-0 z-50 rounded-none border-none w-screen h-screen max-w-none m-0"
+    : "";
+
+  const innerBaseHeight =
+    "min-h-[420px] md:min-h-[560px] lg:min-h-[640px] xl:min-h-[700px]";
+  const innerHeightClass = isFullscreen ? "h-full" : innerBaseHeight;
 
   return (
     <div
       ref={containerRef}
-      className="bg-[#10236b]/80 rounded-[32px] border border-bts-border/80 shadow-bts-soft overflow-hidden"
+      className={`${cardBaseClass} ${cardFullscreenClass}`}
     >
-      {/* 高度：沿用 V1.2 ~ V1.4 设定 */}
-      <div className="relative w-full min-h-[420px] md:min-h-[560px] lg:min-h-[640px] xl:min-h-[700px]">
-        {/* 背景 / 游戏区域 */}
+      {/* 分享浮层：挂在整张卡片上，右下角上方 */}
+      {shareOpen && (
+        <div className="absolute right-4 bottom-16 z-40">
+          <div className="w-64 rounded-2xl bg-[#02061a]/95 border border-white/10 shadow-[0_18px_40px_rgba(0,0,0,0.6)] p-3 text-xs text-slate-100">
+            <p className="text-[11px] text-slate-300 mb-2">
+              Share this Sans fight
+            </p>
+            <div className="flex gap-2 mb-2">
+              <button
+                onClick={() => openShareWindow("x")}
+                className="flex-1 rounded-xl bg-black/80 hover:bg-black text-xs py-2 px-2 flex items-center justify-center gap-1"
+              >
+                <span className="text-sm">𝕏</span>
+                <span>X</span>
+              </button>
+              <button
+                onClick={() => openShareWindow("facebook")}
+                className="flex-1 rounded-xl bg-[#1877f2] hover:bg-[#1b82ff] text-xs py-2 px-2 flex items-center justify-center gap-1"
+              >
+                <span className="text-sm">f</span>
+                <span>Facebook</span>
+              </button>
+            </div>
+            <div className="flex gap-2 mb-2">
+              <button
+                onClick={() => openShareWindow("reddit")}
+                className="flex-1 rounded-xl bg-[#ff4500] hover:bg-[#ff5b1f] text-xs py-2 px-2 flex items-center justify-center gap-1"
+              >
+                <span className="text-sm">👽</span>
+                <span>Reddit</span>
+              </button>
+              <button
+                onClick={handleCopyLink}
+                className="flex-1 rounded-xl bg-[#111827] hover:bg-[#1f2937] text-xs py-2 px-2 flex items-center justify-center gap-1"
+              >
+                <span className="text-sm">🔗</span>
+                <span>Copy link</span>
+              </button>
+            </div>
+            <button
+              className="w-full mt-1 text-[11px] text-slate-400 hover:text-slate-200"
+              onClick={() => setShareOpen(false)}
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* 游戏区域 / 背景 */}
+      <div className={`relative w-full ${innerHeightClass}`}>
         {playing ? (
           <iframe
             ref={iframeRef}
             src={game.gameUrl}
             title={`Bad Time Simulator – ${game.name}`}
             className="absolute inset-0 w-full h-full border-0"
-            allow="fullscreen; autoplay"
-            allowFullScreen
+            allow="autoplay"
           />
         ) : (
           <>
-            {/* 背景图 */}
             <Image
               src={game.heroBg}
               alt={`${game.name} background`}
               fill
               className="object-cover"
             />
-            {/* 蓝色蒙版 */}
             <div className="absolute inset-0 bg-gradient-to-b from-[#0b1f63]/70 via-[#071443]/82 to-[#02061a]/96" />
 
-            {/* 居中内容：圆圈 + 标题 + Play 按钮 */}
             <div className="absolute inset-0 z-10 flex items-center justify-center px-4 text-center">
               <div className="flex flex-col items-center">
                 <div className="relative mb-6">
@@ -113,9 +195,8 @@ export function GameHeroCard({ game }: GameHeroCardProps) {
           </>
         )}
 
-        {/* 底部评分条 + 右侧按钮：始终可点击（z-index 提高） */}
-        <div className="absolute left-0 right-0 bottom-0 z-20 h-12 md:h-14 bg-gradient-to-t from-[#010313]/98 via-[#010313]/85 to-transparent flex items-center">
-          {/* 评分 */}
+        {/* 底部评分条 + 右下角按钮（始终可点） */}
+        <div className="absolute left-0 right-0 bottom-0 z-30 h-12 md:h-14 bg-gradient-to-t from-[#010313]/98 via-[#010313]/85 to-transparent flex items-center">
           <div className="flex items-center gap-2 px-6">
             <InteractiveRating
               gameId={game.id}
@@ -124,11 +205,10 @@ export function GameHeroCard({ game }: GameHeroCardProps) {
             />
           </div>
 
-          {/* 右下角按钮：紫色分享 + 蓝色全屏（风格接近你截图） */}
           <div className="ml-auto flex items-center gap-2 pr-4 md:pr-5">
-            {/* 分享按钮 */}
+            {/* 分享按钮：紫色方块 */}
             <button
-              onClick={handleShare}
+              onClick={toggleSharePanel}
               className="w-9 h-9 rounded-2xl bg-[#5b4cfb] border border-white/10 flex items-center justify-center text-slate-50 hover:bg-[#6b5cff] transition"
               title="Share"
             >
@@ -180,9 +260,9 @@ export function GameHeroCard({ game }: GameHeroCardProps) {
               </svg>
             </button>
 
-            {/* 全屏按钮 */}
+            {/* 全屏按钮：蓝色方块，自定义覆盖层 */}
             <button
-              onClick={handleFullscreen}
+              onClick={handleFullscreenToggle}
               className="w-9 h-9 rounded-2xl bg-[#0091ff] border border-white/10 flex items-center justify-center text-slate-50 hover:bg-[#0aa0ff] transition"
               title="Fullscreen"
             >
