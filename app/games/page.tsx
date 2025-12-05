@@ -20,8 +20,18 @@ export default function AllGamesPage() {
               <Link href="/games" className="text-white font-semibold">
                 All Games
               </Link>
-              <button className="hover:text-white">Sans Fight Mastery</button>
-              <button className="hover:text-white">Papyrus Encounter</button>
+              <Link
+                href="/posts/sans-fight-mastery"
+                className="hover:text-white"
+              >
+                Sans Fight Mastery
+              </Link>
+              <Link
+                href="/posts/papyrus-encounter"
+                className="hover:text-white"
+              >
+                Papyrus Encounter
+              </Link>
               <button className="hover:text-white">Play Deltarune</button>
             </nav>
           </div>
@@ -122,7 +132,7 @@ export default function AllGamesPage() {
       {/* 页脚 */}
       <footer className="border-t border-bts-border/80 mt-6">
         <div className="max-w-7xl mx-auto px-4 lg:px-8 py-6 text-sm text-slate-400 flex flex-col md:flex-row items-center justify-between gap-3">
-          <div className="flex items-center gap-2">
+          <div className="flex items中心 gap-2">
             <span className="font-semibold text-slate-200">
               Bad Time Simulator
             </span>
