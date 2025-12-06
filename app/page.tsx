@@ -1,12 +1,11 @@
 // app/page.tsx
+"use client";
+
+import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { GameHeroSection } from "@/components/GameHeroSection";
-
-const thumbs = Array.from({ length: 18 }).map((_, i) => ({
-  id: i + 1,
-  src: `/images/bts-thumb-${i + 1}.jpg`,
-}));
+import { GameHeroCard } from "@/components/GameHeroCard";
+import { games } from "@/lib/games";
 
 const galleryShots = Array.from({ length: 10 }).map((_, i) => ({
   id: i + 1,
@@ -55,15 +54,19 @@ const faqItems = [
 ];
 
 export default function HomePage() {
+  // 当前选中的游戏（默认第一个）
+  const [activeGameId, setActiveGameId] = useState(games[0].id);
+  const activeGame = games.find((g) => g.id === activeGameId) ?? games[0];
+
   return (
-    <div className="min-h-screen text-slate-100 bg-gradient-to-b from-[#030b2a] via-[#02061a] to-[#010312]">
-      {/* 顶部导航 */}
+    <div className="min-h-screen bg-gradient-to-b from-[#030b2a] via-[#02061a] to-[#010312] text-slate-100">
+      {/* 顶部导航条（保持 V1.52 样式） */}
       <header className="sticky top-0 z-20 backdrop-blur bg-gradient-to-r from-[#1350d4] via-[#2337b7] to-[#1350d4] border-b border-bts-border/60 shadow-[0_10px_30px_rgba(0,0,0,0.45)]">
         <div className="max-w-7xl mx-auto px-4 lg:px-8 h-16 flex items-center justify-between gap-4">
           <div className="flex items-center gap-3">
             <Link
               href="/"
-              className="font-semibold tracking-tight text-lg md:text-xl hover:text-white flex items-center gap-2"
+              className="font-semibold tracking-tight text-lg md:text-xl hover:text-white"
             >
               Bad Time Simulator
             </Link>
@@ -105,47 +108,76 @@ export default function HomePage() {
         </div>
       </header>
 
-      {/* 主内容 */}
-      <main className="max-w-7xl mx-auto px-4 lg:px-8 py-6 lg:py-8 space-y-8 text-base">
-        {/* 顶部：英雄区 + 右侧缩略图 */}
+      {/* 主体内容 */}
+      <main className="max-w-7xl mx-auto px-4 lg:px-8 py-6 lg:py-8 space-y-8">
+        {/* 顶部 Hero：左侧大游戏卡片 + 右侧游戏列表 */}
         <section className="grid lg:grid-cols-[minmax(0,2.4fr)_minmax(260px,1fr)] gap-6 items-start">
-          {/* 左侧：大游戏卡片 */}
-          <GameHeroSection />
+          {/* 左侧：大游戏卡片（根据 activeGame 渲染） */}
+          <GameHeroCard game={activeGame} />
 
-          {/* 右侧：广告 + 竖图墙 */}
+          {/* 右侧：广告位 + 游戏列表 */}
           <div className="space-y-4">
+            {/* Ads 卡片（保持原样） */}
             <div className="bg-bts-card-soft rounded-3xl p-4 border border-bts-border/80">
-              <p className="text-[12px] uppercase tracking-wide text-slate-300 mb-1">
+              <p className="text-[11px] uppercase tracking-wide text-slate-400 mb-1">
                 Ads by Google
               </p>
-              <div className="w-full h-24 rounded-2xl bg-slate-900/60 border border-dashed border-slate-600 flex items-center justify-center text-sm text-slate-300">
+              <div className="w-full h-24 rounded-2xl bg-slate-900/60 border border-dashed border-slate-600 flex items-center justify-center text-xs text-slate-400">
                 300×250 Ad Placeholder
               </div>
             </div>
 
+            {/* 右侧游戏列表：点击切换左侧大卡片 */}
             <div className="bg-bts-card-soft rounded-3xl p-3 border border-bts-border/80">
-              <div className="grid grid-cols-3 gap-2">
-                {thumbs.map((t) => (
-                  <div
-                    key={t.id}
-                    className="relative w-full pt-[100%] rounded-xl overflow-hidden bg-black/60"
+              <h2 className="text-xs font-semibold text-slate-300 mb-2 uppercase tracking-[0.2em]">
+                Sans Fights
+              </h2>
+              <div className="flex flex-col gap-2">
+                {games.map((game) => (
+                  <button
+                    key={game.id}
+                    type="button"
+                    onClick={() => setActiveGameId(game.id)}
+                    className={`flex items-center gap-3 rounded-2xl px-2.5 py-2 border transition text-left ${
+                      activeGameId === game.id
+                        ? "border-bts-accent bg-bts-card"
+                        : "border-bts-border/40 bg-[#050a23]"
+                    }`}
                   >
-                    <Image
-                      src={t.src}
-                      alt={`Bad Time Simulator thumbnail ${t.id}`}
-                      fill
-                      className="object-cover"
-                    />
-                  </div>
+                    <div className="relative w-14 h-14 rounded-xl overflow-hidden bg-black/60 flex-shrink-0">
+                      <Image
+                        src={game.avatar || game.heroBg}
+                        alt={game.name}
+                        fill
+                        className="object-cover"
+                      />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="text-xs font-medium text-slate-100 truncate">
+                        {game.name}
+                      </div>
+                      {game.shortTag && (
+                        <div className="text-[11px] text-slate-400 truncate">
+                          {game.shortTag}
+                        </div>
+                      )}
+                      <div className="mt-0.5 flex items-center gap-2 text-[11px] text-slate-400">
+                        <span>★ {game.rating.toFixed(1)}</span>
+                        <span className="text-slate-500">
+                          ({game.ratingCount.toLocaleString()})
+                        </span>
+                      </div>
+                    </div>
+                  </button>
                 ))}
               </div>
             </div>
           </div>
         </section>
 
-        {/* 中部截图区 */}
+        {/* Screenshot 区域（保持 V1.52 风格） */}
         <section className="bg-bts-card rounded-3xl p-4 md:p-5 border border-bts-border/80 shadow-bts-soft">
-          <h2 className="text-base font-semibold mb-3">Screenshots</h2>
+          <h2 className="text-sm font-semibold mb-3">Screenshots</h2>
           <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-2 md:gap-3">
             {galleryShots.map((shot) => (
               <div
@@ -163,234 +195,95 @@ export default function HomePage() {
           </div>
         </section>
 
-        {/* 下部：左文字 + 右评论 */}
+        {/* 下方：左侧文章 + 右侧评论 / FAQ */}
         <section className="grid lg:grid-cols-[minmax(0,2.1fr)_minmax(320px,1fr)] gap-6 items-start">
-          {/* 左侧内容 */}
+          {/* 左侧：文章内容 */}
           <article className="space-y-6">
             <div className="bg-bts-card rounded-3xl p-5 border border-bts-border/80 space-y-4">
               <div>
-                <h2 className="text-2xl font-semibold">
+                <h2 className="text-xl font-semibold">
                   Bad Time Simulator | Sans Fight &amp; Undertale Boss Battles
                 </h2>
+                <p className="text-xs text-slate-400 mt-1">
+                  Bullet hell • Pattern memorization • High-intensity boss rush
+                </p>
               </div>
 
-              <p className="text-base text-slate-200/90 leading-relaxed">
-                Play Bad Time Simulator and relive multiple Sans fight variants,
-                Bad Time re-creations, and all major boss fights from Undertale
-                and Deltarune – including custom remixes, Papyrus, Mettaton EX,
-                Jevil, and more. Experience these legendary bullet-hell
-                challenges instantly in your browser.
+              <p className="text-sm text-slate-200/90 leading-relaxed">
+                Bad Time Simulator brings the iconic Sans fight and other
+                Undertale-inspired boss battles into your browser. Train
+                reaction speed, learn dense bullet patterns, and push your focus
+                to the limit with endless and practice-style modes.
               </p>
 
-              <h3 className="text-xl font-semibold mt-4">
-                What is Bad Time Simulator?
-              </h3>
-              <p className="text-base text-slate-200/90 leading-relaxed">
-                Bad Time Simulator takes the game’s most notorious challenge –
-                the final confrontation from Undertale&apos;s genocide route –
-                and turns it into a focused boss-rush experience. Every attack
-                pattern is reproduced to keep the intensity, while the browser
-                format makes it easy to jump in and try again.
+              <p className="text-sm text-slate-200/90 leading-relaxed">
+                Use Normal modes to learn basic routes and timing, then step up
+                into Hardcore or Endless variants when you&apos;re ready. Every
+                attempt helps you memorize patterns, build better movement
+                habits, and slowly push further into each phase.
               </p>
-
-              <h4 className="font-semibold mt-3 text-base">
-                Core Gameplay Highlights
-              </h4>
-              <ul className="text-base text-slate-200/90 space-y-1.5 list-disc list-inside leading-relaxed">
-                <li>
-                  Authentic recreation of Sans&apos; fourth-wall-breaking
-                  dialogue and personality.
-                </li>
-                <li>
-                  True bullet-hell rhythm with escalating difficulty and unique
-                  mechanics.
-                </li>
-                <li>
-                  Blue soul gravity mechanics that change movement physics
-                  mid-battle.
-                </li>
-                <li>
-                  Karma damage system that punishes greedy choices more than
-                  defensive play.
-                </li>
-              </ul>
-            </div>
-
-            {/* How to play + video */}
-            <div className="bg-bts-card rounded-3xl p-5 border border-bts-border/80 space-y-4">
-              <h3 className="text-xl font-semibold">
-                How to Play Bad Time Simulator
-              </h3>
-              <p className="text-base text-slate-200/90 leading-relaxed">
-                Master the controls and game modes to survive the legendary Bad
-                Time Simulator challenge.
-              </p>
-
-              <div className="grid md:grid-cols-2 gap-4">
-                <div className="bg-bts-card-soft rounded-2xl p-4 border border-bts-border/80 text-base text-slate-200/90 space-y-2">
-                  <h4 className="font-semibold text-base mb-1">
-                    Game Modes Available
-                  </h4>
-                  <ul className="space-y-1.5 list-disc list-inside leading-relaxed">
-                    <li>
-                      <span className="font-semibold">Normal Mode:</span> The
-                      classic Sans boss experience.
-                    </li>
-                    <li>
-                      <span className="font-semibold">Practice Mode:</span>{" "}
-                      Retry specific patterns without pressure.
-                    </li>
-                    <li>
-                      <span className="font-semibold">Endless Mode:</span>{" "}
-                      Survive as long as possible with randomized attacks.
-                    </li>
-                  </ul>
-                </div>
-
-                <div className="bg-bts-card-soft rounded-2xl p-4 border border-bts-border/80 text-base text-slate-200/90 space-y-2">
-                  <h4 className="font-semibold text-base mb-1">
-                    Master Bad Time Strategies
-                  </h4>
-                  <ul className="space-y-1.5 list-disc list-inside leading-relaxed">
-                    <li>Learn patterns instead of reacting randomly.</li>
-                    <li>Focus on hitbox awareness and tiny movements.</li>
-                    <li>Avoid panic jumping – stay calm and precise.</li>
-                    <li>Use Practice mode to drill the hardest attacks.</li>
-                  </ul>
-                </div>
-              </div>
-
-              <div className="bg-bts-card-soft rounded-2xl border border-bts-border/80 overflow-hidden">
-                <div className="aspect-video relative bg-black/70">
-                  <Image
-                    src="/images/bts-video-thumb.jpg"
-                    alt="Bad Time Simulator video"
-                    fill
-                    className="object-cover opacity-80"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-black/20 to-black/60" />
-                  <button className="absolute inset-0 m-auto w-16 h-16 rounded-full bg-bts-accent hover:bg-bts-accent-soft flex items-center justify-center shadow-bts-soft text-3xl">
-                    ▶
-                  </button>
-                </div>
-                <div className="px-4 py-3 text-base flex items-center justify-between">
-                  <span className="font-medium">
-                    Bad Time Mastery – See All Attack Patterns in Action
-                  </span>
-                  <span className="text-sm text-slate-300 hidden md:inline">
-                    YouTube • Gameplay walkthrough
-                  </span>
-                </div>
-              </div>
             </div>
 
             {/* FAQ */}
-            <div className="bg-bts-card rounded-3xl p-5 border border-bts-border/80 space-y-3">
-              <h3 className="text-xl font-semibold mb-1">FAQ</h3>
-              <p className="text-base text-slate-300 mb-2">
-                Common questions about Bad Time Simulator.
-              </p>
-              <div className="space-y-2">
-                {faqItems.map((item, idx) => (
-                  <details
-                    key={idx}
-                    className="group bg-bts-card-soft border border-bts-border/80 rounded-2xl px-4 py-3 text-base"
-                  >
-                    <summary className="flex items-center justify-between cursor-pointer list-none">
-                      <span className="font-medium">{item.q}</span>
-                      <span className="ml-4 text-sm text-slate-400 group-open:hidden">
-                        +
-                      </span>
-                      <span className="ml-4 text-sm text-slate-400 hidden group-open:inline">
-                        −
-                      </span>
-                    </summary>
-                    <p className="mt-2 text-slate-200/90 leading-relaxed">
-                      {item.a}
-                    </p>
-                  </details>
-                ))}
-              </div>
-            </div>
-
-            {/* 底部 CTA */}
-            <div className="bg-gradient-to-r from-bts-card-soft to-[#163b7e] rounded-3xl p-6 border border-bts-border/80 flex flex-col md:flex-row items-center justify-between gap-4">
-              <div>
-                <h3 className="text-2xl font-semibold">
-                  Ready for the Challenge?
-                </h3>
-                <p className="text-base text-slate-200/90 mt-1 leading-relaxed">
-                  Jump into the Sans fight and see how long your determination
-                  lasts.
-                </p>
-              </div>
-              <Link
-                href="/"
-                className="inline-flex items-center justify-center px-6 py-2.5 rounded-full bg-bts-accent hover:bg-bts-accent-soft text-base font-medium shadow-bts-soft"
-              >
-                ▶ Play Bad Time Simulator Now
-              </Link>
+            <div className="bg-bts-card-soft rounded-3xl p-5 border border-bts-border/80 space-y-3">
+              <h3 className="text-sm font-semibold mb-1">
+                Bad Time Simulator FAQ
+              </h3>
+              {faqItems.map((item, idx) => (
+                <div key={idx} className="border-t border-bts-border/60 pt-3">
+                  <p className="text-xs font-semibold text-slate-200 mb-1">
+                    {item.q}
+                  </p>
+                  <p className="text-xs text-slate-300 leading-relaxed">
+                    {item.a}
+                  </p>
+                </div>
+              ))}
             </div>
           </article>
 
-          {/* 右侧评论区 */}
+          {/* 右侧：评论 / 活动区 */}
           <aside className="space-y-4">
-            <div className="bg-bts-card rounded-3xl p-4 border border-bts-border/80 max-h-[520px] overflow-y-auto text-sm">
-              <div className="flex items-center justify-between mb-3">
-                <h3 className="text-base font-semibold">Comments</h3>
-                <button className="text-[12px] text-bts-accent hover:underline">
-                  Load More
-                </button>
-              </div>
+            <div className="bg-bts-card-soft rounded-3xl p-4 border border-bts-border/80">
+              <h3 className="text-sm font-semibold mb-2">Recent comments</h3>
               <div className="space-y-3">
-                {comments.map((c, idx) => (
+                {comments.map((c, i) => (
                   <div
-                    key={idx}
-                    className="rounded-2xl bg-bts-card-soft/70 p-3 border border-bts-border/70"
+                    key={i}
+                    className="rounded-2xl bg-[#050a23] border border-bts-border/70 px-3 py-2.5"
                   >
-                    <div className="flex items-center justify-between gap-2 mb-1.5">
-                      <div className="flex items-center gap-2">
-                        <div className="w-8 h-8 rounded-full bg-bts-accent/30 flex items-center justify-center text-xs font-semibold">
-                          {c.user[0]}
-                        </div>
-                        <div>
-                          <p className="text-sm font-medium">{c.user}</p>
-                          <p className="text-[12px] text-slate-400">
-                            {c.time}
-                          </p>
-                        </div>
-                      </div>
-                      <button className="text-[11px] text-slate-400 hover:text-slate-200">
-                        ⋮
-                      </button>
+                    <div className="flex items-center justify-between text-[11px] mb-1">
+                      <span className="font-semibold text-slate-100">
+                        {c.user}
+                      </span>
+                      <span className="text-slate-500">{c.time}</span>
                     </div>
-                    <p className="text-sm text-slate-200/90 leading-relaxed">
+                    <p className="text-xs text-slate-300 leading-relaxed">
                       {c.text}
                     </p>
                   </div>
                 ))}
               </div>
+            </div>
 
-              <div className="mt-4 pt-3 border-t border-bts-border/70">
-                <p className="text-sm font-semibold mb-2">Add a Comment</p>
-                <input
-                  className="w-full bg-[#020b27] border border-bts-border/80 rounded-xl px-3 py-2 text-sm outline-none focus:border-bts-accent"
-                  placeholder="Name"
-                />
-                <textarea
-                  className="mt-2 w-full bg-[#020b27] border border-bts-border/80 rounded-xl px-3 py-2 text-sm outline-none resize-none focus:border-bts-accent h-20"
-                  placeholder="Write your comment..."
-                />
-                <button className="mt-2 w-full inline-flex items-center justify-center px-4 py-2 rounded-xl bg-bts-accent hover:bg-bts-accent-soft text-sm font-medium">
-                  Submit Comment
-                </button>
-              </div>
+            <div className="bg-bts-card-soft rounded-3xl p-4 border border-bts-border/80">
+              <h3 className="text-sm font-semibold mb-2">
+                Submit your run or score
+              </h3>
+              <p className="text-xs text-slate-300 mb-3 leading-relaxed">
+                Share your best streaks, no-hit attempts or creative challenges
+                with the community. We&apos;ll feature standout runs in future
+                updates.
+              </p>
+              <button className="w-full inline-flex items-center justify-center text-xs px-3 py-2 rounded-full bg-bts-accent hover:bg-bts-accent-soft transition shadow-bts-soft">
+                Upload run / share replay
+              </button>
             </div>
           </aside>
         </section>
       </main>
 
-      {/* 页脚 */}
+      {/* 底部 Footer */}
       <footer className="border-t border-bts-border/80 mt-6">
         <div className="max-w-7xl mx-auto px-4 lg:px-8 py-6 text-sm text-slate-400 flex flex-col md:flex-row items-center justify-between gap-3">
           <div className="flex items-center gap-2">
