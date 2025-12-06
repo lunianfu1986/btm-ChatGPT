@@ -2,6 +2,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { GameHeroCard } from "@/components/GameHeroCard";
+import { games } from "@/lib/games";
 
 const thumbs = Array.from({ length: 18 }).map((_, i) => ({
   id: i + 1,
@@ -55,6 +56,9 @@ const faqItems = [
 ];
 
 export default function HomePage() {
+  // 主游戏：取 games 列表的第一个（比如 Endless Sans）
+  const mainGame = games[0];
+
   return (
     <div className="min-h-screen flex bg-[#02061a] text-slate-100">
       {/* 左侧竖向 BTS 导航栏 */}
@@ -80,7 +84,7 @@ export default function HomePage() {
 
       {/* 右侧主区域 */}
       <div className="flex-1 flex flex-col">
-        {/* 顶部导航条（V1.5 风格，可保持你当时的配色，如需再调我们后面再说） */}
+        {/* 顶部导航条 */}
         <header className="sticky top-0 z-20 backdrop-blur bg-[#02061A]/90 border-b border-bts-border/60">
           <div className="max-w-7xl mx-auto px-4 lg:px-8 h-16 flex items-center justify-between gap-4">
             <div className="flex items-center gap-3">
@@ -135,8 +139,8 @@ export default function HomePage() {
         <main className="max-w-7xl mx-auto px-4 lg:px-8 py-6 lg:py-8 space-y-8">
           {/* 顶部：左侧大卡片 + 右侧缩略图墙 */}
           <section className="grid lg:grid-cols-[minmax(0,2.4fr)_minmax(260px,1fr)] gap-6 items-start">
-            {/* 左侧：大游戏卡片（单一主游戏） */}
-            <GameHeroCard />
+            {/* 左侧：大游戏卡片（主游戏） */}
+            <GameHeroCard game={mainGame} />
 
             {/* 右侧：广告 + 竖向缩略图墙 */}
             <div className="space-y-4">
@@ -150,7 +154,7 @@ export default function HomePage() {
                 </div>
               </div>
 
-              {/* 右侧竖图墙（保持原来的 3 列缩略图） */}
+              {/* 右侧竖图墙 */}
               <div className="bg-bts-card-soft rounded-3xl p-3 border border-bts-border/80 max-h-[570px] overflow-y-auto">
                 <div className="grid grid-cols-3 gap-2">
                   {thumbs.map((t) => (
